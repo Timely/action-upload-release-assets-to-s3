@@ -1,0 +1,43 @@
+name: 'upload-release-assets-to-s3'
+description: 'Uploads assets from a release to S3'
+author: 'Orvar Segerström <orvar@memory.ai>'
+inputs:
+  github-token:
+    description: The GitHub token used to fetch release assets
+    required: true
+  release-tag:
+    description: The tag of the release to fetch assets from
+    required: true
+  s3-bucket:
+    description: The S3 bucket to upload assets to
+    required: true
+  s3-region:
+    description: The S3 region to upload assets to
+    required: true
+  s3-bucket-public-url:
+    description: The public URL of the S3 bucket
+    required: false
+  s3-key-prefix:
+    description: The prefix to use for the files uploaded to s3 (e.g. 'my-app/releases/foo')
+    required: false
+    default: 'releases/{version-parsed-from-tag}'
+  aws-access-key-id:
+    description: The access key id for AWS
+    required: true
+  aws-secret-access-key:
+    description: The secret access key for AWS
+    required: true
+  done-when-asset-suffixes-exist:
+    description: A comma-separated list of suffixes to wait for before uploading done indicator file
+    required: false
+  done-indicator-file-name:
+    description: If provided, this file will be added to the github release, containing the urls to all uploaded assets
+    required: false
+    default: ''
+
+  debug:
+    description: Whether to tell the GitHub client to log details of its requests
+    default: 'false'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
