@@ -50,6 +50,18 @@ function action({ repo, owner, releaseTag, token, s3Bucket, awsAccessKeyId, awsS
             repo,
             tag: releaseTag,
         })
+            .catch(e => {
+            if (e.status === 404) {
+                return github.rest.repos.listReleases({ owner, repo }).then(releases => {
+                    const release = releases.data.find(r => r.tag_name === releaseTag);
+                    if (!release) {
+                        throw new Error(`No release found for tag ${releaseTag}`);
+                    }
+                    return { data: release };
+                });
+            }
+            throw e;
+        })
             .then(({ data }) => data);
         let uploadedOrExistingAssets = [];
         for (const asset of release.assets) {
